@@ -9,10 +9,10 @@ databaseChangeLog:
                   autoIncrement: true
                   constraints:
                     primaryKey: true
-                  name: id
+                  name: varchar(128)
                   type: bigint
               - column:
-                  name: username
+                  name: name
                   type: varchar(128)
               - column:
                   name: email
