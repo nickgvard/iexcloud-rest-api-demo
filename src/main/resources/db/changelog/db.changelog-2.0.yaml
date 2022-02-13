@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-roles
+      author: nickgvard
+      changes:
+        - insert:
+            catalogName: local_db
+            columns:
+              - column:
+                  name: name
+                  value: "ROLE_USER"
+            tableName: roles

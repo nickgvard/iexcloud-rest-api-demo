@@ -1,23 +1,84 @@
 databaseChangeLog:
   - changeSet:
-      id: create-table-user
+      id: create-table-users
       author: nickgvard
       changes:
         - createTable:
             columns:
               - column:
-                  autoIncrement: true
                   constraints:
                     primaryKey: true
-                  name: varchar(128)
+                  name: id
                   type: bigint
+                  autoIncrement: true
               - column:
                   name: name
-                  type: varchar(128)
+                  type: varchar(127)
+              - column:
+                  name: user_image
+                  type: varchar(255)
               - column:
                   name: email
-                  type: varchar(256)
+                  type: varchar(255)
+            tableName: users
+  - changeSet:
+      id: create-table-roles
+      author: nickgvard
+      changes:
+        - createTable:
+            columns:
               - column:
-                  name: password
-                  type: varchar(256)
-            tableName: Users
+                  constraints:
+                    primaryKey: true
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+              - column:
+                  constraints:
+                    unique: true
+                  name: name
+                  type: varchar(31)
+            tableName: roles
+  - changeSet:
+      id: create-table-users-roles
+      author: nickgvard
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    primaryKey: true
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+              - column:
+                  name: user_id
+                  type: bigint
+              - column:
+                  name: role_id
+                  type: bigint
+            tableName: users_roles
+  - changeSet:
+      id: create-foreign-key-user-users-roles
+      author: nickgvard
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: users_roles
+            constraintName: user_users_roles_fkey
+            referencedColumnNames: id
+            referencedTableName: users
+            onDelete: cascade
+            onUpdate: no action
+  - changeSet:
+      id: create-foreign-key-role-users-roles
+      author: nickgvard
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: role_id
+            baseTableName: users_roles
+            constraintName: role_users_roles_fkey
+            referencedColumnNames: id
+            referencedTableName: roles
+            onDelete: cascade
+            onUpdate: no action
