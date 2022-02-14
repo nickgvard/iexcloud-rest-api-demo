@@ -22,14 +22,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     private final CompanyRepository repository;
 
-    @Async
     @Override
-    public CompletableFuture<List<CompanyDto>> findAll() {
+    public List<CompanyDto> findAll() {
         List<Company> all = repository.findAll();
         System.out.println();
-        return CompletableFuture.completedFuture(all.stream()
+        return all.stream()
                 .map(CompanyDto::toDto)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -37,9 +36,8 @@ public class CompanyServiceImpl implements CompanyService {
         return CompanyDto.toDto(repository.findCompanyBySymbol(symbol));
     }
 
-    @Async
     @Override
-    public CompletableFuture<List<CompanyDto>> findTop5AndOther() {
+    public List<CompanyDto> findTop5AndOther() {
         List<Company> top5By = repository
                 .findTop5By(Sort.by(Sort.Direction.DESC, "previousVolume", "volume"));
 
@@ -47,12 +45,12 @@ public class CompanyServiceImpl implements CompanyService {
                 top5By.stream().map(Company::getSymbol)
                         .collect(Collectors.toList()));
 
-        return CompletableFuture.completedFuture(Stream.of(top5By, other)
+        return Stream.of(top5By, other)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList())
                 .stream()
                 .map(CompanyDto::toDto)
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
     }
 
     @Override

@@ -22,10 +22,7 @@ public class CompaniesRestControllerV1 {
 
     @GetMapping("/stocks")
     public ResponseEntity<List<CompanyDto>> findAll() {
-        long start = System.currentTimeMillis();
-        List<CompanyDto> companyDtos = companyService.findAll().join();
-        long finish = System.currentTimeMillis();
-        log.info("result ----> {}", (finish - start));
+        List<CompanyDto> companyDtos = companyService.findAll();
         return ResponseEntity.ok(companyDtos);
     }
 
@@ -36,7 +33,7 @@ public class CompaniesRestControllerV1 {
 
     @GetMapping("/stocks/top")
     public ResponseEntity<List<CompanyDto>> findTop5AndOther() {
-        return ResponseEntity.ok(companyService.findTop5AndOther().join());
+        return ResponseEntity.ok(companyService.findTop5AndOther());
     }
 
     @GetMapping("/stocks/delta")
