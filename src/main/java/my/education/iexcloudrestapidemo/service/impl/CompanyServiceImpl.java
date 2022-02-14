@@ -38,14 +38,14 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<CompanyDto> findTop5AndOther() {
-        List<Company> top5By = repository
+        List<Company> sortedBy = repository
                 .findTop5By(Sort.by(Sort.Direction.DESC, "previousVolume", "volume"));
 
         List<Company> other = repository.findCompaniesBySymbolNotInOrderBySymbolAsc(
-                top5By.stream().map(Company::getSymbol)
+                sortedBy.stream().map(Company::getSymbol)
                         .collect(Collectors.toList()));
 
-        return Stream.of(top5By, other)
+        return Stream.of(sortedBy, other)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList())
                 .stream()
@@ -55,7 +55,8 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public List<CompanyDto> findTop5ByDeltaLatestPrice() {
-        List<Company> byDeltaLatestPrice = repository.findTop5ByDeltaLatestPrice(PageRequest.of(0, 5));
+        List<Company> byDeltaLatestPrice = repository
+                .findTop5ByDeltaLatestPrice(PageRequest.of(0, 5));
         return byDeltaLatestPrice.stream()
                 .map(CompanyDto::toDto)
                 .collect(Collectors.toList());
