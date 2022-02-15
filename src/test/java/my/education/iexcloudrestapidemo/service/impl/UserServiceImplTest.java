@@ -70,6 +70,26 @@ class UserServiceImplTest {
         assertEquals(expected.getRoles().get(0).getId(), actual.getRolesDto().get(0).getId());
     }
 
+    @Test
+    void whenExistsUserChangedByNameOnRegistration() {
+        User existsUser = user("test@test.com", "test");
+        User expected = user(existsUser.getEmail(), "test2");
+        expected.setId(1L);
+
+        doReturn(existsUser.getEmail()).when(oidcUser).getEmail();
+
+        given(userRepository.findUserByEmail(existsUser.getEmail())).willReturn(existsUser);
+
+        existsUser.setName(expected.getName());
+
+        given(userRepository.save(existsUser)).willReturn(expected);
+
+        UserDto actual = userService.sighUp(oidcUser);
+
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
+    }
+
     private User user(String email, String fullName) {
         return User.builder()
                 .email(email)
