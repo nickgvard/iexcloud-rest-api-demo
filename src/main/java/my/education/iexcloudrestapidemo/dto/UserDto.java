@@ -24,6 +24,7 @@ public class UserDto {
         return User
                 .builder()
                 .id(userDto.getId())
+                .name(userDto.getName())
                 .email(userDto.getEmail())
                 .roles(Objects.isNull(userDto.getRolesDto()) ? null : userDto
                         .getRolesDto()
@@ -37,6 +38,7 @@ public class UserDto {
         return UserDto
                 .builder()
                 .id(userEntity.getId())
+                .name(userEntity.getName())
                 .email(userEntity.getEmail())
                 .rolesDto(Objects.isNull(userEntity.getRoles()) ? null : userEntity
                         .getRoles()
