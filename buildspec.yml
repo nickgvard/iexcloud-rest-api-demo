@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-version:
+      java: corretto11
+
+  build:
+    commands:
+      - echo Running boot jar
+      - chmod +x gradlew
+      - ./gradlew build
+      - echo Building and tagging Docker image
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 913541760421.dkr.ecr.eu-central-1.amazonaws.com
+      - docker build -t iexcloud-api .
+      - docker tag iexcloud-api:latest 913541760421.dkr.ecr.eu-central-1.amazonaws.com/iexcloud-api:latest
+
+  post_build:
+    commands:
+      - echo Pushing to ECR
+      - docker push 913541760421.dkr.ecr.eu-central-1.amazonaws.com/iexcloud-api:latest
+
+artifacts:
+  files:
+    - 'build/libs/*.jar'
