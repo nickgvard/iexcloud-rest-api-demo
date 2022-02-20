@@ -26,7 +26,7 @@ public class CompaniesRestControllerV1 {
         return ResponseEntity.ok(companyDtos);
     }
 
-    @GetMapping("/{symbol}/stocks")
+    @GetMapping("/stocks/{symbol}")
     public ResponseEntity<CompanyDto> findBySymbol(@PathVariable String symbol) {
         return ResponseEntity.ok(companyService.findCompanyBySymbol(symbol));
     }

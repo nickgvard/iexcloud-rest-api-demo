@@ -5,6 +5,6 @@ WORKDIR /usr/src/app/
 
 ARG JAR=build/libs/iexcloud-rest-api-demo-0.0.1.jar
 
-ADD ${JAR} /usr/src/app/application.jar
+ADD ${JAR} iexloud-rest-api.jar
 
-CMD ["java", "-jar", "/usr/src/app/iexloud-rest-api.jar"]
+CMD ["java", "-jar", "iexloud-rest-api.jar"]
