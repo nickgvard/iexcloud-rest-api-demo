@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-version:
+      java: corretto11
+
+  pre-build:
+    commands:
+      - echo Running tests
+      - gradle test
+
+  build:
+    commands:
+      - echo Running boot jar
+      - gradle bootJar
+
+artifacts:
+  files:
+    - 'build/libs/*.jar'
