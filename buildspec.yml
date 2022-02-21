@@ -5,15 +5,23 @@ phases:
     runtime-version:
       java: corretto11
 
-  pre-build:
-    commands:
-      - echo Running tests
-      - gradle test
-
   build:
     commands:
       - echo Running boot jar
-      - gradle bootJar
+      - echo $(date '+%Y%m%d')
+      - REPOSITORY_URI=913541760421.dkr.ecr.eu-central-1.amazonaws.com/iexcloud-api
+      - IMAGE_TAG=$(date +%F_%H-%M-%S)
+      - chmod +x gradlew
+      - ./gradlew build
+      - echo Building and tagging Docker image
+      - aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 913541760421.dkr.ecr.eu-central-1.amazonaws.com
+      - docker build -t iexcloud-api:$IMAGE_TAG .
+      - docker tag iexcloud-api:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
+
+  post_build:
+    commands:
+      - echo Pushing to ECR
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
 
 artifacts:
   files:
