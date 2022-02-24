@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  mysqldb:
+    image: mysql:8.0.28
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYDB_PASSWORD
+      - MYSQL_USER=$MYDB_USER
+      - MYSQL_PASSWORD=$MYDB_PASSWORD
+      - MYSQL_DATABASE=$MYDB_DATABASE
+    ports:
+      - $MYDB_LOCAL_PORT:$MYDB_DOCKER_PORT
+    volumes:
+      - pgdb:/var/lib/mysql
+  iexcloud-rest-api:
+    depends_on:
+      - mysqldb
+    build:
+      dockerfile: Dockerfile
+    restart: on-failure
+    env_file: .env
+    ports:
+      - $REST_API_LOCAL_PORT:$REST_API_DOCKER_PORT
+    environment:
+      - DB_URL_MY=$MYDB_URL//mysqldb:$MYDB_DOCKER_PORT/$MYDB_DATABASE
+      - DB_USER_MY=$MYDB_USER
+      - DB_PASSWORD_MY=$MYDB_PASSWORD
+      - DB_URL_PG=$PGDB_URL
+      - DB_USER_PG=$PGDB_USER
+      - DB_PASSWORD_PG=$PGDB_PASSWORD
+      - OAUTH2_CLIENT_ID=$OAUTH2_CLIENT_ID
+      - OAUTH2_CLIENT_SECRET=$OAUTH2_CLIENT_SECRET
+      - REDIRECT_URI=$REDIRECT_URI
+    stdin_open: true
+    tty: true
+volumes:
+  pgdb:
