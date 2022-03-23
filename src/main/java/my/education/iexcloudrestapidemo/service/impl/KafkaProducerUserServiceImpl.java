@@ -3,6 +3,7 @@ package my.education.iexcloudrestapidemo.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.education.iexcloudrestapidemo.dto.UserDto;
+import my.education.iexcloudrestapidemo.dto.UserRegistrationDto;
 import my.education.iexcloudrestapidemo.service.GenericKafkaProducerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,15 +14,15 @@ import org.springframework.util.concurrent.ListenableFuture;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaProducerUserServiceImpl implements GenericKafkaProducerService<UserDto> {
+public class KafkaProducerUserServiceImpl implements GenericKafkaProducerService<UserRegistrationDto> {
 
     @Value("${kafka.registration.topic.name}")
     private String registrationTopic;
-    private final KafkaTemplate<Long, UserDto> kafkaTemplate;
+    private final KafkaTemplate<Long, UserRegistrationDto> kafkaTemplate;
 
     @Override
-    public void produce(UserDto userDto) {
-        ListenableFuture<SendResult<Long, UserDto>> produceFuture
+    public void produce(UserRegistrationDto userDto) {
+        ListenableFuture<SendResult<Long, UserRegistrationDto>> produceFuture
                 = kafkaTemplate.send(registrationTopic, userDto);
         produceFuture.addCallback(
                 result -> log.info("[Sent message by email: {} with offset={}]", userDto.getEmail(), result.getRecordMetadata().offset()),
