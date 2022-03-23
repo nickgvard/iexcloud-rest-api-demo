@@ -1,5 +1,7 @@
 package my.education.iexcloudrestapidemo.service.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.education.iexcloudrestapidemo.dto.UserDto;
@@ -18,15 +20,21 @@ public class KafkaProducerUserServiceImpl implements GenericKafkaProducerService
 
     @Value("${kafka.registration.topic.name}")
     private String registrationTopic;
-    private final KafkaTemplate<Long, UserRegistrationDto> kafkaTemplate;
+    private final KafkaTemplate<Long, String> kafkaTemplate;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void produce(UserRegistrationDto userDto) {
-        ListenableFuture<SendResult<Long, UserRegistrationDto>> produceFuture
-                = kafkaTemplate.send(registrationTopic, userDto);
-        produceFuture.addCallback(
-                result -> log.info("[Sent message by email: {} with offset={}]", userDto.getEmail(), result.getRecordMetadata().offset()),
-                error -> log.error("[Unable to sent message by email: {}]. Exception: {}", userDto.getEmail(), error.getMessage()));
-        kafkaTemplate.flush();
+        try {
+            String jsonUser = objectMapper.writeValueAsString(userDto);
+            ListenableFuture<SendResult<Long, String>> produceFuture
+                    = kafkaTemplate.send(registrationTopic, jsonUser);
+            produceFuture.addCallback(
+                    result -> log.info("[Sent message by email: {} with offset={}]", userDto.getEmail(), result.getRecordMetadata().offset()),
+                    error -> log.error("[Unable to sent message by email: {}]. Exception: {}", userDto.getEmail(), error.getMessage()));
+            kafkaTemplate.flush();
+        }catch (JsonProcessingException processingException) {
+            log.error("[Json processing by user {} failed.]", userDto);
+        }
     }
 }
